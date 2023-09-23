@@ -1,8 +1,5 @@
-import numpy as np
-import random
 from realtime_kmeans.kmeans import weighted_kmeans_1d
 from realtime_kmeans.realtime_histogram import RealTimeHistogram
-import time
 
 
 class RealTimeKMeans:
@@ -24,7 +21,6 @@ class RealTimeKMeans:
         weights = self.histogram.bin_counts
 
         coordinates = (self.histogram.bin_edges[:-1] + self.histogram.bin_edges[1:])/2
-
 
         labels, centroids = weighted_kmeans_1d(coordinates, weights, self.k, self.max_iters, self.tol)
         return labels, centroids
