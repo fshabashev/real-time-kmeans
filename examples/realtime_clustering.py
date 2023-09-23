@@ -25,4 +25,4 @@ if __name__ == "__main__":
 
     print("Labels:", labels)
     print("Centroids:", centroids)
-    print(f"Time taken to cluster 100 million data points: {end_time - start_time:.2f} seconds")
+    print(f"Time taken to cluster 10 million data points: {end_time - start_time:.5f} seconds")
