@@ -1,27 +1,25 @@
 from realtime_kmeans.kmeans import weighted_kmeans_1d
-from realtime_kmeans.realtime_histogram import RealTimeHistogram
+from realtime_kmeans.streaming_histogram import StreamingHistogram
+import numpy as np
 
 
 class RealTimeKMeans:
-    def __init__(self, bin_edges, k, max_iters=100, tol=1e-4):
-        self.histogram = None
+    def __init__(self, data_range, num_bins, k, max_data_points=None, max_iters=100, tol=1e-4):
+        self.histogram = StreamingHistogram(data_range=data_range, num_bins=num_bins, max_data_points=max_data_points)
         self.k = k
         self.max_iters = max_iters
         self.tol = tol
-        self.bin_edges = bin_edges
 
     def update(self, new_data_list):
         # Update histograms with new data
-        if self.histogram is None:
-            self.histogram = RealTimeHistogram(self.bin_edges)
-        self.histogram.update(new_data_list)
+        self.histogram.batch_update(new_data_list)
 
     def cluster(self):
         # Convert histograms to vectors (using bin counts)
-        weights = self.histogram.bin_counts
+        weights = np.array(self.histogram.get_histogram())
 
-        coordinates = (self.histogram.bin_edges[:-1] + self.histogram.bin_edges[1:])/2
+        bin_width = (self.histogram.data_range[1] - self.histogram.data_range[0]) / self.histogram.num_bins
+        coordinates = np.array([(i + 0.5) * bin_width for i in range(self.histogram.num_bins)])
 
         labels, centroids = weighted_kmeans_1d(coordinates, weights, self.k, self.max_iters, self.tol)
         return labels, centroids
-

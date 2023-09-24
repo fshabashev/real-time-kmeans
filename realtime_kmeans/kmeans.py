@@ -2,6 +2,17 @@ import numpy as np
 
 
 def weighted_kmeans_1d(data, weights, k, max_iters=100, tol=1e-4):
+    if not isinstance(data, np.ndarray):
+        raise ValueError("data must be a numpy array")
+    if not isinstance(weights, np.ndarray):
+        raise ValueError("weights must be a numpy array")
+    if data.ndim != 1:
+        raise ValueError("data must be a one-dimensional numpy array")
+    if weights.ndim != 1:
+        raise ValueError("weights must be a one-dimensional numpy array")
+    if data.shape != weights.shape:
+        raise ValueError("data and weights must have the same shape")
+
     # Initialize centroids by randomly selecting k data points
     centroids = data[np.random.choice(len(data), k, replace=False)]
 

@@ -1,28 +1,38 @@
-import numpy as np
-
-import random
+# Import necessary modules
+from realtime_kmeans.streaming_histogram import StreamingHistogram
 from realtime_kmeans.rt_kmeans import RealTimeKMeans
-import time
+
 
 if __name__ == "__main__":
-    num_points = 10_000_000
+    # Initialize parameters
+    import numpy as np
+    from realtime_kmeans.kmeans import weighted_kmeans_1d
+    from realtime_kmeans.streaming_histogram import StreamingHistogram
 
-    data_points = [random.randint(0, 1000) for _ in range(num_points)]
+    # ... [RealTimeKMeans class here] ...
 
-    # Create histograms
-    bin_edges = np.linspace(0, 1000, 100)  # 100 bins
-    real_time_kmeans = RealTimeKMeans(bin_edges, k=3)
+    # Parameters for RealTimeKMeans
+    data_range = (0, 100000)
+    num_bins = 100000
+    k = 5
+    max_data_points = 1400
+    max_iters = 100
+    tol = 1e-4
 
-    batch_size = 100_000
+    # Create an instance of RealTimeKMeans
+    rt_kmeans = RealTimeKMeans(data_range, num_bins, k, max_data_points, max_iters, tol)
 
-    for i in range(0, num_points, batch_size):
-        real_time_kmeans.update([data_points[i:i + batch_size]])
+    # Generate a massive stream of data
+    data_size = 10 ** 6
+    data_stream = np.random.uniform(0, 100000, data_size)  # Random data points between 0 and 100000
 
-    start_time = time.time()
-    labels, centroids = real_time_kmeans.cluster()
+    # Update the histogram with the streaming data in chunks
+    chunk_size = 1000
+    for i in range(0, data_size, chunk_size):
+        rt_kmeans.update(data_stream[i:i + chunk_size])
 
-    end_time = time.time()
+    # Perform clustering
+    labels, centroids = rt_kmeans.cluster()
 
-    print("Labels:", labels)
+    # Print results
     print("Centroids:", centroids)
-    print(f"Time taken to cluster 10 million data points: {end_time - start_time:.5f} seconds")
