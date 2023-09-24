@@ -13,7 +13,7 @@ def generate_clustered_data(num_clusters, points_per_cluster, cluster_spread=500
         data.extend(np.random.normal(center, cluster_spread, points_per_cluster))
 
     # Clip data to ensure it's within the specified range
-    return np.clip(data, data_range[0], data_range[1])
+    return np.clip(data, data_range[0], data_range[1]), centers
 
 
 def test_kmeans_similarity():
@@ -21,7 +21,7 @@ def test_kmeans_similarity():
     np.random.seed(42)
 
     # Generate clustered data
-    data = generate_clustered_data(num_clusters=5, points_per_cluster=2000)
+    data, centers = generate_clustered_data(num_clusters=5, points_per_cluster=2000)
     k = 5
 
     # Normal KMeans clustering
