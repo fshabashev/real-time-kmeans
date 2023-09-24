@@ -12,6 +12,13 @@ def weighted_kmeans_1d(data, weights, k, max_iters=100, tol=1e-4):
         raise ValueError("weights must be a one-dimensional numpy array")
     if data.shape != weights.shape:
         raise ValueError("data and weights must have the same shape")
+    if np.any(weights < 0):
+        raise ValueError("weights cannot be negative")
+
+    # Filter out data points with zero weights
+    nonzero_indices = np.where(weights > 0)[0]
+    data = data[nonzero_indices]
+    weights = weights[nonzero_indices]
 
     # Initialize centroids by randomly selecting k data points
     centroids = data[np.random.choice(len(data), k, replace=False)]
